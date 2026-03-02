@@ -5,12 +5,13 @@
 //  Created by Daniel Jacob Chittoor on 02/03/26.
 //
 
+import ServiceManagement
 import SwiftUI
 
 struct SettingsView: View {
     @AppStorage(SettingsKeys.autoCleanEnabled) private var autoCleanEnabled = true
     @AppStorage(SettingsKeys.showNotification) private var showNotification = false
-    @AppStorage(SettingsKeys.launchAtLogin) private var launchAtLogin = false
+    @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
 
     @AppStorage(SettingsKeys.customBlockedParams) private var customBlockedParams: [String] = []
     @AppStorage(SettingsKeys.whitelistedDomains) private var whitelistedDomains: [String] = []
@@ -20,7 +21,21 @@ struct SettingsView: View {
             Section("General") {
                 Toggle("Auto-clean URLs from clipboard", isOn: $autoCleanEnabled)
                 Toggle("Show notification when URL is cleaned", isOn: $showNotification)
-                Toggle("Launch at login", isOn: $launchAtLogin)
+                Toggle("Launch at login", isOn: Binding(
+                    get: { launchAtLogin },
+                    set: { newValue in
+                        do {
+                            if newValue {
+                                try SMAppService.mainApp.register()
+                            } else {
+                                try SMAppService.mainApp.unregister()
+                            }
+                            launchAtLogin = newValue
+                        } catch {
+                            launchAtLogin = SMAppService.mainApp.status == .enabled
+                        }
+                    }
+                ))
             }
 
 
@@ -42,6 +57,7 @@ struct SettingsView: View {
                 Button("Reset to Defaults") {
                     autoCleanEnabled = true
                     showNotification = false
+                    try? SMAppService.mainApp.unregister()
                     launchAtLogin = false
 
                     customBlockedParams = []

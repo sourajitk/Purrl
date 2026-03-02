@@ -10,7 +10,7 @@ import Foundation
 enum SettingsKeys {
     static let autoCleanEnabled = "autoCleanEnabled"
     static let showNotification = "showNotification"
-    static let launchAtLogin = "launchAtLogin"
+
 
     static let customBlockedParams = "customBlockedParams"
     static let whitelistedDomains = "whitelistedDomains"
@@ -19,7 +19,7 @@ enum SettingsKeys {
         UserDefaults.standard.register(defaults: [
             autoCleanEnabled: true,
             showNotification: false,
-            launchAtLogin: false,
+
 
             customBlockedParams: "[]",
             whitelistedDomains: "[]",
