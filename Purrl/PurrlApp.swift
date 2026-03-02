@@ -22,6 +22,7 @@ struct PurrlApp: App {
         } label: {
             Image(systemName: clipboardMonitor.menuBarIcon)
         }
+        .menuBarExtraStyle(.menu)
 
         Settings {
             SettingsView()
