@@ -16,9 +16,11 @@ struct PurrlApp: App {
     }
 
     var body: some Scene {
-        MenuBarExtra("Purrl", systemImage: "link.badge.plus") {
+        MenuBarExtra {
             MenuBarView(monitor: clipboardMonitor)
                 .onAppear { clipboardMonitor.start() }
+        } label: {
+            Image(systemName: clipboardMonitor.menuBarIcon)
         }
 
         Settings {

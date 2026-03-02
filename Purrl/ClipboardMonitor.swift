@@ -11,6 +11,7 @@ import Combine
 final class ClipboardMonitor: ObservableObject {
     @Published private(set) var lastCleanedResult: CleanedEntry?
     @Published private(set) var pauseUntil: Date?
+    @Published var menuBarIcon = "link.badge.plus"
 
     struct CleanedEntry: Equatable {
         let original: String
@@ -21,6 +22,7 @@ final class ClipboardMonitor: ObservableObject {
 
     private var timer: AnyCancellable?
     private var debounceTimer: AnyCancellable?
+    private var iconResetTimer: AnyCancellable?
     private var lastChangeCount: Int
 
     init() {
@@ -33,7 +35,8 @@ final class ClipboardMonitor: ObservableObject {
         timer = Timer.publish(every: 0.5, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in self?.checkClipboard() }
-    }
+
+}
 
     func stop() {
         timer = nil
@@ -108,6 +111,14 @@ final class ClipboardMonitor: ObservableObject {
             removedParams: removedParams,
             date: .now
         )
+
+        // Animate menu bar icon
+        menuBarIcon = "checkmark.circle"
+        iconResetTimer?.cancel()
+        iconResetTimer = Just(())
+            .delay(for: .seconds(1.5), scheduler: RunLoop.main)
+            .sink { [weak self] _ in self?.menuBarIcon = "link.badge.plus" }
+
     }
 
     private func validatedURL(from string: String) -> URL? {
