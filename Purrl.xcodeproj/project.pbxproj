@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		224D99402F558000008798A5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 224D99212F557EBA008798A5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 224D99282F557EBA008798A5;
+			remoteInfo = Purrl;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		224D99292F557EBA008798A5 /* Purrl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Purrl.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		224D993E2F558000008798A5 /* PurrlTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PurrlTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -16,10 +27,22 @@
 			path = Purrl;
 			sourceTree = "<group>";
 		};
+		224D99442F558000008798A5 /* PurrlTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PurrlTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		224D99262F557EBA008798A5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		224D993B2F558000008798A5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				224D992B2F557EBA008798A5 /* Purrl */,
+				224D99442F558000008798A5 /* PurrlTests */,
 				224D992A2F557EBA008798A5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				224D99292F557EBA008798A5 /* Purrl.app */,
+				224D993E2F558000008798A5 /* PurrlTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,6 +95,29 @@
 			productReference = 224D99292F557EBA008798A5 /* Purrl.app */;
 			productType = "com.apple.product-type.application";
 		};
+		224D993D2F558000008798A5 /* PurrlTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 224D99432F558000008798A5 /* Build configuration list for PBXNativeTarget "PurrlTests" */;
+			buildPhases = (
+				224D993A2F558000008798A5 /* Sources */,
+				224D993B2F558000008798A5 /* Frameworks */,
+				224D993C2F558000008798A5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				224D99412F558000008798A5 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				224D99442F558000008798A5 /* PurrlTests */,
+			);
+			name = PurrlTests;
+			packageProductDependencies = (
+			);
+			productName = PurrlTests;
+			productReference = 224D993E2F558000008798A5 /* PurrlTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -82,6 +130,10 @@
 				TargetAttributes = {
 					224D99282F557EBA008798A5 = {
 						CreatedOnToolsVersion = 26.3;
+					};
+					224D993D2F558000008798A5 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 224D99282F557EBA008798A5;
 					};
 				};
 			};
@@ -100,12 +152,20 @@
 			projectRoot = "";
 			targets = (
 				224D99282F557EBA008798A5 /* Purrl */,
+				224D993D2F558000008798A5 /* PurrlTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		224D99272F557EBA008798A5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		224D993C2F558000008798A5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +182,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		224D993A2F558000008798A5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		224D99412F558000008798A5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 224D99282F557EBA008798A5 /* Purrl */;
+			targetProxy = 224D99402F558000008798A5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		224D99322F557EBB008798A5 /* Debug */ = {
@@ -255,6 +330,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -285,6 +361,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -300,6 +377,44 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		224D99452F558000008798A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.djchittoor.PurrlTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Purrl.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Purrl";
+			};
+			name = Debug;
+		};
+		224D99462F558000008798A5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.djchittoor.PurrlTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Purrl.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Purrl";
 			};
 			name = Release;
 		};
@@ -320,6 +435,15 @@
 			buildConfigurations = (
 				224D99352F557EBB008798A5 /* Debug */,
 				224D99362F557EBB008798A5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		224D99432F558000008798A5 /* Build configuration list for PBXNativeTarget "PurrlTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				224D99452F558000008798A5 /* Debug */,
+				224D99462F558000008798A5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
