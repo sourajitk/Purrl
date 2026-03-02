@@ -25,7 +25,8 @@ struct URLSanitizer {
         "s_cid", "spm", "_openstat",
     ]
 
-    static func sanitize(_ urlString: String) -> SanitizeResult? {
+    static func sanitize(_ urlString: String, additionalParams: [String] = []) -> SanitizeResult? {
+        let extraParams = Set(additionalParams.map { $0.lowercased() })
         guard var components = URLComponents(string: urlString),
               components.host != nil else {
             return nil
@@ -40,7 +41,7 @@ struct URLSanitizer {
 
         for item in queryItems {
             let name = item.name
-            if isTrackingParam(name) {
+            if isTrackingParam(name) || extraParams.contains(name.lowercased()) {
                 removedParams.append(name)
             } else {
                 keptItems.append(item)

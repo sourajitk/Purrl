@@ -9,9 +9,10 @@ import SwiftUI
 
 struct MenuBarView: View {
     @ObservedObject var monitor: ClipboardMonitor
+    @AppStorage(SettingsKeys.autoCleanEnabled) private var autoCleanEnabled = true
 
     var body: some View {
-        Toggle("Auto-clean: \(monitor.autoCleanEnabled ? "ON" : "OFF")", isOn: $monitor.autoCleanEnabled)
+        Toggle("Auto-clean: \(autoCleanEnabled ? "ON" : "OFF")", isOn: $autoCleanEnabled)
 
         Button(pauseButtonLabel) {
             if monitor.isPaused {
@@ -27,8 +28,8 @@ struct MenuBarView: View {
 
         Divider()
 
-        Button("Settings...") {
-            // TODO: open settings window
+        SettingsLink {
+            Text("Settings...")
         }
         .keyboardShortcut(",", modifiers: .command)
 

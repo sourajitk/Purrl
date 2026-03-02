@@ -9,7 +9,6 @@ import AppKit
 import Combine
 
 final class ClipboardMonitor: ObservableObject {
-    @Published var autoCleanEnabled = true
     @Published private(set) var lastCleanedResult: CleanedEntry?
     @Published private(set) var pauseUntil: Date?
 
@@ -62,13 +61,28 @@ final class ClipboardMonitor: ObservableObject {
         guard currentCount != lastChangeCount else { return }
         lastChangeCount = currentCount
 
-        guard autoCleanEnabled,
+        let defaults = UserDefaults.standard
+        guard defaults.bool(forKey: SettingsKeys.autoCleanEnabled),
               !isPaused else { return }
 
         guard let string = pasteboard.string(forType: .string),
               let url = validatedURL(from: string) else { return }
 
-        guard let result = URLSanitizer.sanitize(url.absoluteString),
+        // Skip sanitization for whitelisted domains
+        let whitelistedDomains: [String] = (try? JSONDecoder().decode(
+            [String].self,
+            from: (defaults.string(forKey: SettingsKeys.whitelistedDomains) ?? "[]").data(using: .utf8) ?? Data()
+        )) ?? []
+        if let host = url.host, whitelistedDomains.contains(where: { host.hasSuffix($0) }) {
+            return
+        }
+
+        let customBlockedParams: [String] = (try? JSONDecoder().decode(
+            [String].self,
+            from: (defaults.string(forKey: SettingsKeys.customBlockedParams) ?? "[]").data(using: .utf8) ?? Data()
+        )) ?? []
+
+        guard let result = URLSanitizer.sanitize(url.absoluteString, additionalParams: customBlockedParams),
               case .cleaned(let original, let cleaned, let removedParams) = result else { return }
 
         // Debounce: wait 150ms before writing back

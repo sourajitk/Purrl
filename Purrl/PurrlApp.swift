@@ -11,10 +11,18 @@ import SwiftUI
 struct PurrlApp: App {
     @StateObject private var clipboardMonitor = ClipboardMonitor()
 
+    init() {
+        SettingsKeys.registerDefaults()
+    }
+
     var body: some Scene {
         MenuBarExtra("Purrl", systemImage: "link.badge.plus") {
             MenuBarView(monitor: clipboardMonitor)
                 .onAppear { clipboardMonitor.start() }
+        }
+
+        Settings {
+            SettingsView()
         }
     }
 }
