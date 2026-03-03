@@ -30,7 +30,7 @@ final class ClipboardMonitor: ObservableObject {
         let skippedReason: String?
     }
 
-    private var timer: AnyCancellable?
+    private var timer: DispatchSourceTimer?
     private var debounceTimer: AnyCancellable?
     private var iconResetTimer: AnyCancellable?
     private var terminationObserver: Any?
@@ -43,9 +43,11 @@ final class ClipboardMonitor: ObservableObject {
     func start() {
         guard timer == nil else { return }
         lastChangeCount = NSPasteboard.general.changeCount
-        timer = Timer.publish(every: 0.5, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in self?.checkClipboard() }
+        let source = DispatchSource.makeTimerSource(queue: .main)
+        source.schedule(deadline: .now(), repeating: .milliseconds(500), leeway: .milliseconds(150))
+        source.setEventHandler { [weak self] in self?.checkClipboard() }
+        source.activate()
+        timer = source
 
         terminationObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.willTerminateNotification,
@@ -54,6 +56,7 @@ final class ClipboardMonitor: ObservableObject {
     }
 
     func stop() {
+        timer?.cancel()
         timer = nil
         debounceTimer = nil
         iconResetTimer = nil
