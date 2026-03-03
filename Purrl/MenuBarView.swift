@@ -10,6 +10,7 @@ import SwiftUI
 struct MenuBarView: View {
     @ObservedObject var monitor: ClipboardMonitor
     @AppStorage(SettingsKeys.autoCleanEnabled) private var autoCleanEnabled = true
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         Toggle("Auto-clean: \(autoCleanEnabled ? "ON" : "OFF")", isOn: $autoCleanEnabled)
@@ -25,6 +26,10 @@ struct MenuBarView: View {
         Divider()
 
         Text(lastCleanedLabel)
+
+        Button("Recent Activity...") {
+            openWindow(id: "activity-log")
+        }
 
         Divider()
 

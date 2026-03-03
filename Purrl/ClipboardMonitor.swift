@@ -12,12 +12,22 @@ final class ClipboardMonitor: ObservableObject {
     @Published private(set) var lastCleanedResult: CleanedEntry?
     @Published private(set) var pauseUntil: Date?
     @Published var menuBarIcon = "link.badge.plus"
+    @Published private(set) var activityLog: [LogEntry] = []
 
     struct CleanedEntry: Equatable {
         let original: String
         let cleaned: String
         let removedParams: [String]
         let date: Date
+    }
+
+    struct LogEntry: Identifiable {
+        let id = UUID()
+        let date: Date
+        let original: String
+        let cleaned: String?
+        let removedParams: [String]
+        let skippedReason: String?
     }
 
     private var timer: AnyCancellable?
@@ -77,6 +87,7 @@ final class ClipboardMonitor: ObservableObject {
             from: (defaults.string(forKey: SettingsKeys.whitelistedDomains) ?? "[]").data(using: .utf8) ?? Data()
         )) ?? []
         if let host = url.host, isWhitelisted(host: host, domains: whitelistedDomains) {
+            appendLog(LogEntry(date: .now, original: url.absoluteString, cleaned: nil, removedParams: [], skippedReason: "whitelisted"))
             return
         }
 
@@ -112,6 +123,8 @@ final class ClipboardMonitor: ObservableObject {
             date: .now
         )
 
+        appendLog(LogEntry(date: .now, original: original, cleaned: cleaned, removedParams: removedParams, skippedReason: nil))
+
         // Animate menu bar icon
         menuBarIcon = "checkmark.circle"
         iconResetTimer?.cancel()
@@ -137,6 +150,13 @@ final class ClipboardMonitor: ObservableObject {
         }
 
         return url
+    }
+
+    private func appendLog(_ entry: LogEntry) {
+        activityLog.insert(entry, at: 0)
+        if activityLog.count > 20 {
+            activityLog.removeLast(activityLog.count - 20)
+        }
     }
 
     private func isWhitelisted(host: String, domains: [String]) -> Bool {

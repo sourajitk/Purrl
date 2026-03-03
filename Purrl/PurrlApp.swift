@@ -24,6 +24,12 @@ struct PurrlApp: App {
         }
         .menuBarExtraStyle(.menu)
 
+        Window("Recent Activity", id: "activity-log") {
+            ActivityLogView()
+                .environmentObject(clipboardMonitor)
+        }
+        .defaultSize(width: 420, height: 360)
+
         Settings {
             SettingsView()
         }
