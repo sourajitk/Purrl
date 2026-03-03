@@ -152,14 +152,14 @@ final class ClipboardMonitor: ObservableObject {
         return url
     }
 
-    private func appendLog(_ entry: LogEntry) {
+    func appendLog(_ entry: LogEntry) {
         activityLog.insert(entry, at: 0)
         if activityLog.count > 20 {
             activityLog.removeLast(activityLog.count - 20)
         }
     }
 
-    private func isWhitelisted(host: String, domains: [String]) -> Bool {
+    func isWhitelisted(host: String, domains: [String]) -> Bool {
         let normalizedHost = host.lowercased()
         let hostWithoutWWW = normalizedHost.hasPrefix("www.") ? String(normalizedHost.dropFirst(4)) : normalizedHost
 
@@ -171,7 +171,8 @@ final class ClipboardMonitor: ObservableObject {
                 return normalizedHost.hasSuffix(suffix) || hostWithoutWWW == String(p.dropFirst(2))
             }
 
-            return hostWithoutWWW == p || normalizedHost == p
+            let patternWithoutWWW = p.hasPrefix("www.") ? String(p.dropFirst(4)) : p
+            return hostWithoutWWW == patternWithoutWWW
         }
     }
 }
