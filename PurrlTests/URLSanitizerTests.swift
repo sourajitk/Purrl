@@ -84,6 +84,11 @@ struct URLSanitizerTests {
         #expect(cleaned == "https://example.com/page#section")
     }
 
+    @Test func fragmentOnlyNoParams() {
+        let result = URLSanitizer.sanitize("https://example.com#section")
+        #expect(result == .unchanged("https://example.com#section"))
+    }
+
     @Test func fragmentWithNoTracking() {
         let result = URLSanitizer.sanitize("https://example.com/page?q=1#section")
         #expect(result == .unchanged("https://example.com/page?q=1#section"))

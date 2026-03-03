@@ -66,6 +66,92 @@ struct WhitelistTests {
     }
 }
 
+struct URLValidationTests {
+
+    private func monitor() -> ClipboardMonitor { ClipboardMonitor() }
+
+    // MARK: - Authentication URLs
+
+    @Test func rejectsURLWithUserInfo() {
+        let m = monitor()
+        #expect(m.validatedURL(from: "https://user:pass@host.com/path") == nil)
+    }
+
+    @Test func rejectsURLWithUserOnly() {
+        let m = monitor()
+        #expect(m.validatedURL(from: "https://user@host.com/path") == nil)
+    }
+
+    // MARK: - Fragment-only URLs (no query params)
+
+    @Test func fragmentOnlyURLPassesValidation() {
+        let m = monitor()
+        let url = m.validatedURL(from: "https://example.com#section")
+        #expect(url != nil)
+        // Sanitizer will return .unchanged, so it won't be modified
+    }
+
+    // MARK: - Length limits
+
+    @Test func rejectsURLOver2048Chars() {
+        let m = monitor()
+        let long = "https://example.com/" + String(repeating: "a", count: 2030)
+        #expect(long.count > 2048)
+        #expect(m.validatedURL(from: long) == nil)
+    }
+
+    @Test func acceptsURLAtExactly2048Chars() {
+        let m = monitor()
+        let base = "https://example.com/"
+        let url = base + String(repeating: "a", count: 2048 - base.count)
+        #expect(url.count == 2048)
+        #expect(m.validatedURL(from: url) != nil)
+    }
+
+    // MARK: - Multiple URLs / text blocks
+
+    @Test func rejectsMultipleURLsSeparatedBySpace() {
+        let m = monitor()
+        #expect(m.validatedURL(from: "https://a.com https://b.com") == nil)
+    }
+
+    @Test func rejectsTextWithTab() {
+        let m = monitor()
+        #expect(m.validatedURL(from: "https://a.com\thttps://b.com") == nil)
+    }
+
+    @Test func rejectsMultilineText() {
+        let m = monitor()
+        #expect(m.validatedURL(from: "https://a.com\nhttps://b.com") == nil)
+    }
+
+    // MARK: - Non-HTTP schemes
+
+    @Test func rejectsCallbackScheme() {
+        let m = monitor()
+        #expect(m.validatedURL(from: "x-callback://action") == nil)
+    }
+
+    @Test func rejectsObsidianScheme() {
+        let m = monitor()
+        #expect(m.validatedURL(from: "obsidian://open?vault=test") == nil)
+    }
+
+    @Test func rejectsFileScheme() {
+        let m = monitor()
+        #expect(m.validatedURL(from: "file:///Users/test/doc.txt") == nil)
+    }
+
+    // MARK: - Whitespace trimming
+
+    @Test func trimsLeadingTrailingWhitespace() {
+        let m = monitor()
+        let url = m.validatedURL(from: "  https://example.com/path  ")
+        #expect(url != nil)
+        #expect(url?.absoluteString == "https://example.com/path")
+    }
+}
+
 struct CustomParamsTests {
 
     @Test func customParamStrippedAlongsideDefaults() {

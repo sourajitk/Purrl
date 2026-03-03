@@ -33,6 +33,7 @@ final class ClipboardMonitor: ObservableObject {
     private var timer: AnyCancellable?
     private var debounceTimer: AnyCancellable?
     private var iconResetTimer: AnyCancellable?
+    private var terminationObserver: Any?
     private var lastChangeCount: Int
 
     init() {
@@ -46,11 +47,20 @@ final class ClipboardMonitor: ObservableObject {
             .autoconnect()
             .sink { [weak self] _ in self?.checkClipboard() }
 
-}
+        terminationObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.willTerminateNotification,
+            object: nil, queue: .main
+        ) { [weak self] _ in self?.stop() }
+    }
 
     func stop() {
         timer = nil
         debounceTimer = nil
+        iconResetTimer = nil
+        if let observer = terminationObserver {
+            NotificationCenter.default.removeObserver(observer)
+            terminationObserver = nil
+        }
     }
 
     func pauseForOneHour() {
@@ -77,6 +87,12 @@ final class ClipboardMonitor: ObservableObject {
         let defaults = UserDefaults.standard
         guard defaults.bool(forKey: SettingsKeys.autoCleanEnabled),
               !isPaused else { return }
+
+        // Ignore clipboard content that is primarily a file, image, or rich text
+        let types = pasteboard.types ?? []
+        if types.contains(.fileURL) || types.contains(.png) || types.contains(.tiff) {
+            return
+        }
 
         guard let string = pasteboard.string(forType: .string),
               let url = validatedURL(from: string) else { return }
@@ -134,18 +150,26 @@ final class ClipboardMonitor: ObservableObject {
 
     }
 
-    private func validatedURL(from string: String) -> URL? {
-        guard string.count < 2048,
-              !string.contains("\n"),
-              !string.hasPrefix("{"),
-              !string.hasPrefix("["),
-              string.hasPrefix("http://") || string.hasPrefix("https://") else {
+    func validatedURL(from string: String) -> URL? {
+        let trimmed = string.trimmingCharacters(in: .whitespaces)
+        guard trimmed.count <= 2048,
+              !trimmed.contains("\n"),
+              !trimmed.contains(" "),
+              !trimmed.contains("\t"),
+              !trimmed.hasPrefix("{"),
+              !trimmed.hasPrefix("["),
+              trimmed.hasPrefix("http://") || trimmed.hasPrefix("https://") else {
             return nil
         }
 
-        guard let url = URL(string: string),
+        guard let url = URL(string: trimmed),
               let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
               let host = components.host, !host.isEmpty else {
+            return nil
+        }
+
+        // Never modify URLs containing authentication credentials
+        if components.user != nil || components.password != nil {
             return nil
         }
 
