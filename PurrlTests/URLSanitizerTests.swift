@@ -180,4 +180,58 @@ struct URLSanitizerTests {
         }
         #expect(cleaned == "https://example.com?q=1")
     }
+
+    // MARK: - Strict mode
+
+    @Test func strictKeepsAllowedParams() {
+        let result = URLSanitizer.sanitizeStrict("https://example.com/search?q=swift&page=2&fbclid=abc")
+        guard case .cleaned(_, let cleaned, let removed) = result else {
+            Issue.record("Expected .cleaned result")
+            return
+        }
+        #expect(cleaned == "https://example.com/search?q=swift&page=2")
+        #expect(removed == ["fbclid"])
+    }
+
+    @Test func strictRemovesAllUnknownParams() {
+        let result = URLSanitizer.sanitizeStrict("https://example.com?foo=1&bar=2&baz=3")
+        guard case .cleaned(_, let cleaned, let removed) = result else {
+            Issue.record("Expected .cleaned result")
+            return
+        }
+        #expect(cleaned == "https://example.com")
+        #expect(Set(removed) == Set(["foo", "bar", "baz"]))
+    }
+
+    @Test func strictUnchangedWhenAllParamsAllowed() {
+        let result = URLSanitizer.sanitizeStrict("https://example.com/search?q=swift&page=2")
+        #expect(result == .unchanged("https://example.com/search?q=swift&page=2"))
+    }
+
+    @Test func strictUnchangedWhenNoParams() {
+        let result = URLSanitizer.sanitizeStrict("https://example.com/path")
+        #expect(result == .unchanged("https://example.com/path"))
+    }
+
+    @Test func strictPreservesFragment() {
+        let result = URLSanitizer.sanitizeStrict("https://example.com?q=hello&tracker=1#section")
+        guard case .cleaned(_, let cleaned, _) = result else {
+            Issue.record("Expected .cleaned result")
+            return
+        }
+        #expect(cleaned == "https://example.com?q=hello#section")
+    }
+
+    @Test func strictCaseInsensitive() {
+        let result = URLSanitizer.sanitizeStrict("https://example.com?Q=swift&UNKNOWN=x")
+        guard case .cleaned(_, let cleaned, _) = result else {
+            Issue.record("Expected .cleaned result")
+            return
+        }
+        #expect(cleaned == "https://example.com?Q=swift")
+    }
+
+    @Test func strictReturnsNilForInvalidURL() {
+        #expect(URLSanitizer.sanitizeStrict("not a url") == nil)
+    }
 }

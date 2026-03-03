@@ -13,6 +13,7 @@ struct SettingsView: View {
     @AppStorage(SettingsKeys.showNotification) private var showNotification = false
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
 
+    @AppStorage(SettingsKeys.cleaningMode) private var cleaningMode = "standard"
     @AppStorage(SettingsKeys.customBlockedParams) private var customBlockedParams: [String] = []
     @AppStorage(SettingsKeys.whitelistedDomains) private var whitelistedDomains: [String] = []
 
@@ -39,11 +40,31 @@ struct SettingsView: View {
             }
 
 
-            Section("Custom Blocked Parameters") {
-                Text("Additional URL parameters to strip (beyond built-in tracking params).")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                TagInputView(tags: $customBlockedParams, placeholder: "Add parameter name...")
+            Section("Cleaning Mode") {
+                Picker("Mode", selection: $cleaningMode) {
+                    Text("Standard").tag("standard")
+                    Text("Strict").tag("strict")
+                }
+                .pickerStyle(.segmented)
+
+                if cleaningMode == "standard" {
+                    Text("Removes known tracking parameters (like utm_source, fbclid) and your custom blocked params. Other parameters are left untouched.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Removes all parameters except a built-in list of commonly essential ones (like q, v, page). Use this if you don't trust unknown parameters.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            if cleaningMode == "standard" {
+                Section("Custom Blocked Parameters") {
+                    Text("Additional URL parameters to strip (beyond built-in tracking params).")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    TagInputView(tags: $customBlockedParams, placeholder: "Add parameter name...")
+                }
             }
 
             Section("Whitelisted Domains") {
@@ -60,6 +81,7 @@ struct SettingsView: View {
                     try? SMAppService.mainApp.unregister()
                     launchAtLogin = false
 
+                    cleaningMode = "standard"
                     customBlockedParams = []
                     whitelistedDomains = []
                 }

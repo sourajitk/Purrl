@@ -14,6 +14,7 @@ enum SettingsKeys {
 
     static let customBlockedParams = "customBlockedParams"
     static let whitelistedDomains = "whitelistedDomains"
+    static let cleaningMode = "cleaningMode"
 
     static func registerDefaults() {
         UserDefaults.standard.register(defaults: [
@@ -23,6 +24,7 @@ enum SettingsKeys {
 
             customBlockedParams: "[]",
             whitelistedDomains: "[]",
+            cleaningMode: "standard",
         ])
     }
 }

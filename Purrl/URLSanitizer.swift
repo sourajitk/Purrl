@@ -58,6 +58,44 @@ struct URLSanitizer {
         return .cleaned(original: urlString, cleaned: cleaned, removedParams: removedParams)
     }
 
+    private static let allowedParams: Set<String> = [
+        "q", "query", "search", "v", "id", "p", "pid", "page", "start", "offset",
+        "t", "time", "timestamp", "sort", "order", "orderby", "lang", "locale", "hl",
+        "tab", "section", "view", "limit", "per_page", "count", "format", "type",
+    ]
+
+    static func sanitizeStrict(_ urlString: String) -> SanitizeResult? {
+        guard var components = URLComponents(string: urlString),
+              components.host != nil else {
+            return nil
+        }
+
+        guard let queryItems = components.queryItems, !queryItems.isEmpty else {
+            return .unchanged(urlString)
+        }
+
+        var removedParams: [String] = []
+        var keptItems: [URLQueryItem] = []
+
+        for item in queryItems {
+            let name = item.name
+            if allowedParams.contains(name.lowercased()) {
+                keptItems.append(item)
+            } else {
+                removedParams.append(name)
+            }
+        }
+
+        guard !removedParams.isEmpty else {
+            return .unchanged(urlString)
+        }
+
+        components.queryItems = keptItems.isEmpty ? nil : keptItems
+        guard let cleaned = components.string else { return nil }
+
+        return .cleaned(original: urlString, cleaned: cleaned, removedParams: removedParams)
+    }
+
     private static func isTrackingParam(_ name: String) -> Bool {
         let lowered = name.lowercased()
         if trackingParams.contains(lowered) { return true }

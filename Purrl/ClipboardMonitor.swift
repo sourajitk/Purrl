@@ -110,13 +110,20 @@ final class ClipboardMonitor: ObservableObject {
             return
         }
 
-        let customBlockedParams: [String] = (try? JSONDecoder().decode(
-            [String].self,
-            from: (defaults.string(forKey: SettingsKeys.customBlockedParams) ?? "[]").data(using: .utf8) ?? Data()
-        )) ?? []
+        let cleaningMode = defaults.string(forKey: SettingsKeys.cleaningMode) ?? "standard"
 
-        guard let result = URLSanitizer.sanitize(url.absoluteString, additionalParams: customBlockedParams),
-              case .cleaned(let original, let cleaned, let removedParams) = result else { return }
+        let result: SanitizeResult?
+        if cleaningMode == "strict" {
+            result = URLSanitizer.sanitizeStrict(url.absoluteString)
+        } else {
+            let customBlockedParams: [String] = (try? JSONDecoder().decode(
+                [String].self,
+                from: (defaults.string(forKey: SettingsKeys.customBlockedParams) ?? "[]").data(using: .utf8) ?? Data()
+            )) ?? []
+            result = URLSanitizer.sanitize(url.absoluteString, additionalParams: customBlockedParams)
+        }
+
+        guard case .cleaned(let original, let cleaned, let removedParams) = result else { return }
 
         // Debounce: wait 150ms before writing back
         debounceTimer?.cancel()
