@@ -112,7 +112,7 @@ struct URLSanitizer {
         "twitter.com": (.twitter, "fxtwitter.com"),
         "x.com": (.twitter, "fxtwitter.com"),
         "instagram.com": (.instagram, "zzinstagram.com"),
-        "reddit.com": (.reddit, "rxyddit.com"),
+        "reddit.com": (.reddit, "rxddit.com"),
         "bsky.app": (.bluesky, "fxbsky.app"),
     ]
 

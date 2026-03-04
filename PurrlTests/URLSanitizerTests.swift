@@ -335,7 +335,7 @@ struct EmbedFixTests {
             Issue.record("Expected .cleaned result")
             return
         }
-        #expect(cleaned == "https://rxyddit.com/r/swift/comments/abc")
+        #expect(cleaned == "https://rxddit.com/r/swift/comments/abc")
     }
 
     @Test func redditDisabledNotSwapped() {
@@ -385,7 +385,7 @@ struct EmbedFixTests {
             Issue.record("Expected .cleaned result")
             return
         }
-        #expect(cleaned == "https://rxyddit.com/r/swift/comments/abc#top")
+        #expect(cleaned == "https://rxddit.com/r/swift/comments/abc#top")
     }
 
     @Test func noMatchReturnsUnchanged() {
@@ -453,6 +453,6 @@ struct EmbedFixTests {
             return
         }
         #expect(c1 == "https://fxtwitter.com/user/status/123")
-        #expect(c2 == "https://rxyddit.com/r/swift/comments/abc")
+        #expect(c2 == "https://rxddit.com/r/swift/comments/abc")
     }
 }

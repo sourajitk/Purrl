@@ -84,7 +84,7 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
                 Toggle("Twitter/X → fxtwitter.com", isOn: $embedFixTwitter)
                 Toggle("Instagram → zzinstagram.com", isOn: $embedFixInstagram)
-                Toggle("Reddit → rxyddit.com", isOn: $embedFixReddit)
+                Toggle("Reddit → rxddit.com", isOn: $embedFixReddit)
                 Toggle("Bluesky → fxbsky.app", isOn: $embedFixBluesky)
             }
 
