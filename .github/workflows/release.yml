@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: macos-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build archive
+        run: |
+          set -o pipefail
+          xcodebuild archive \
+            -project Purrl.xcodeproj \
+            -scheme Purrl \
+            -configuration Release \
+            -destination 'generic/platform=macOS' \
+            -archivePath build/Purrl.xcarchive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Create DMG
+        run: |
+          mkdir -p build/dmg
+          cp -R build/Purrl.xcarchive/Products/Applications/Purrl.app build/dmg/
+
+          hdiutil create \
+            -volname "Purrl" \
+            -srcfolder build/dmg \
+            -ov -format UDZO \
+            build/Purrl.dmg
+
+      - name: Create release
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            build/Purrl.dmg \
+            --title "${{ github.ref_name }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
